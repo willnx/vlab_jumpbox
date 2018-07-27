@@ -1,0 +1,32 @@
+version: '3'
+services:
+  jumpbox-api:
+    ports:
+      - "5000:5000"
+    image:
+      willnx/vlab-jumpbox-api
+    environment:
+      - VLAB_URL=https://localhost
+      - INF_VCENTER_SERVER=virtlab.igs.corp
+      - INF_VCENTER_USER=Administrator@vsphere.local
+      - INF_VCENTER_PASSWORD=1.Password
+    volumes:
+      - ./vlab_jumpbox_api:/usr/lib/python3.6/site-packages/vlab_jumpbox_api
+    command: ["python3", "app.py"]
+
+  jumpbox-worker:
+    image:
+      willnx/vlab-jumpbox-worker
+    volumes:
+      - ./vlab_jumpbox_api:/usr/lib/python3.6/site-packages/vlab_jumpbox_api
+      - /home/willhn/code/vlab/vlab_inf_common/vlab_inf_common:/usr/lib/python3.6/site-packages/vlab_inf_common
+      - /mnt/raid/images/jumpbox:/images:ro
+    environment:
+      - INF_VCENTER_SERVER=changeME
+      - INF_VCENTER_USER=changeME
+      - INF_VCENTER_PASSWORD=changeME
+      - INF_VCENTER_TOP_LVL_DIR=/vlab
+
+  jumpbox-broker:
+    image:
+      rabbitmq:3.7-alpine
