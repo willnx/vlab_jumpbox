@@ -19,8 +19,8 @@ test: uninstall install
 	cd tests && nosetests -v --with-coverage --cover-package=vlab_jumpbox_api
 
 images: build
-	sudo docker build -f ApiDockerfile -t willnx/vlab-jumpbox-api .
-	sudo docker build -f WorkerDockerfile -t willnx/vlab-jumpbox-worker .
+	docker build -f ApiDockerfile -t willnx/vlab-jumpbox-api .
+	docker build -f WorkerDockerfile -t willnx/vlab-jumpbox-worker .
 
 up:
 	docker-compose -p vlabjumpBox up --abort-on-container-exit
