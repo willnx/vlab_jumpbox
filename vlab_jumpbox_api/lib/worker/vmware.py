@@ -115,15 +115,17 @@ def _setup_jumpbox(vcenter, the_vm, username):
     if result.exitCode:
         error = 'Failed to create user {} in newly deployed jumpbox'.format(username)
         raise RuntimeError(error)
-    # Disable the administrator account so peeps don't use it
-    # nothing will hash to the letter "a" this is pretty effective account disabling
-    cmd2 = '/usr/bin/sudo'
-    args2 = "/usr/sbin/usermod --password 'a' administrator"
 
-    # once the account is disabled, all attempts to check the status will also fail
-    virtual_machine.run_command(vcenter,
-                                the_vm,
-                                cmd,
-                                user='administrator',
-                                password='a',
-                                arguments=args)
+    # Make the Ubuntu GNOME desktop the default used by xRDP
+    # https://www.hiroom2.com/2018/04/29/ubuntu-1804-xrdp-gnome-en/
+    cmd2 = '/usr/bin/sudo'
+    args2 = '/bin/cp /etc/xrdp/xsessionrc /home/{}/.xsessionrc'.format(username)
+    result2 = virtual_machine.run_command(vcenter,
+                                          the_vm,
+                                          cmd2,
+                                          user='administrator',
+                                          password='a',
+                                          arguments=args2)
+    if result2.exitCode:
+        error = 'Failed to create .xsessionrc file in {} homedir'.format(username)
+        raise RuntimeError(error)
