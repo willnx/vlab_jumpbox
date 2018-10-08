@@ -44,6 +44,16 @@ class TestJumpboxView(unittest.TestCase):
 
         self.assertEqual(task_id, expected)
 
+    def test_get_task_link(self):
+        """JumpboxView - GET on /api/1/inf/jumpbox sets the Link header"""
+        resp = self.app.get('/api/1/inf/jumpbox',
+                            headers={'X-Auth': self.token})
+
+        task_id = resp.headers['Link']
+        expected = '<https://localhost/api/1/inf/jumpbox/task/asdf-asdf-asdf>; rel=status'
+
+        self.assertEqual(task_id, expected)
+
     def test_post_task(self):
         """JumpboxView - POST on /api/1/inf/jumpbox returns a task-id"""
         resp = self.app.post('/api/1/inf/jumpbox',
@@ -52,6 +62,17 @@ class TestJumpboxView(unittest.TestCase):
 
         task_id = resp.json['content']['task-id']
         expected = 'asdf-asdf-asdf'
+
+        self.assertEqual(task_id, expected)
+
+    def test_post_task_link(self):
+        """JumpboxView - POST on /api/1/inf/jumpbox sets the Link header"""
+        resp = self.app.post('/api/1/inf/jumpbox',
+                             headers={'X-Auth': self.token},
+                             json={"network": "someNetwork"})
+
+        task_id = resp.headers['Link']
+        expected = '<https://localhost/api/1/inf/jumpbox/task/asdf-asdf-asdf>; rel=status'
 
         self.assertEqual(task_id, expected)
 
@@ -65,6 +86,16 @@ class TestJumpboxView(unittest.TestCase):
 
         self.assertEqual(task_id, expected)
 
+    def test_delete_task_link(self):
+        """JumpboxView - DELETE on /api/1/inf/jumpbox sets the Link header"""
+        resp = self.app.delete('/api/1/inf/jumpbox',
+                             headers={'X-Auth': self.token})
+
+        task_id = resp.headers['Link']
+        expected = '<https://localhost/api/1/inf/jumpbox/task/asdf-asdf-asdf>; rel=status'
+
+        self.assertEqual(task_id, expected)
+        
 
 if __name__ == '__main__':
     unittest.main()
